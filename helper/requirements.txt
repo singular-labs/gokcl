@@ -1,0 +1,5 @@
+ipython==5.5.0
+amazon_kclpy==1.4.5
+click==6.7
+Jinja2==2.10
+boto3==1.5.1
