@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-import click
-import jinja2
+import json
 import os
 import uuid
 
+import click
+import jinja2
 
 from kcl_utils import run_kcl_process
-
 
 APPLICATION_NAME = os.environ.get("APPLICATION_NAME", "KCLWorker")
 EXECUTABLE_PATH = os.environ.get("EXECUTABLE_PATH")
@@ -18,14 +18,16 @@ CONFIG_FILE_PATH_PATTERN = '/tmp/{stream_name}.properties'
 JAVA_PATH = '/usr/bin/java'
 
 
-def create_config_file(stream_name, region):
+def create_config_file(stream_name, region, extra=''):
     """
-    Create a KCL config file from the template coniguration
+    Create a KCL config file from the template configuration
 
     :param stream_name: The Kinesis stream name
      :type stream_name: str
     :param region: The region the worker should run in
      :type region: str
+    :param extra: Extra values for the config
+     :type extra: str
     :return: The path of the config file
      :rtype: str
     """
@@ -50,9 +52,13 @@ def create_config_file(stream_name, region):
         MAX_SHARDS=max_shards,
         WORKER_ID=container_id)
 
+    config_data = json.loads(extra) if len(extra) > 0 else {}
+
     config_file_path = CONFIG_FILE_PATH_PATTERN.format(stream_name=stream_name)
     with open(config_file_path, "w") as config_file:
         config_file.write(template.render(template_vars))
+        for key, value in config_data.iteritems():
+            config_file.write('\n%(key)s = %(value)s\n' % locals())
 
     return config_file_path
 
@@ -60,8 +66,10 @@ def create_config_file(stream_name, region):
 @click.command()
 @click.argument('stream_name')
 @click.argument('region')
-def main(stream_name, region):
-    config_file_path = create_config_file(stream_name, region)
+@click.option("-extra", type=str, default='',
+              help="Optional mapping added into the config.")
+def main(stream_name, region, extra):
+    config_file_path = create_config_file(stream_name, region, extra)
     run_kcl_process(JAVA_PATH, config_file_path)
 
 
