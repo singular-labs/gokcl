@@ -42,5 +42,8 @@ type Record struct {
     PartitionKey        string              `json:"partitionKey"`
     SequenceNumber      string              `json:"sequenceNumber"`
     SubSequenceNumber   uint64              `json:"subSequenceNumber"`
-    ApproximateArrivalTimestamp   uint64    `json:"approximateArrivalTimestamp"`
+    ApproximateArrivalTimestamp struct {
+        ID    uint64 `json:"nano"`
+        Size  uint64 `json:"epochSecond"`
+    }
 }
