@@ -109,7 +109,7 @@ func (consumer *Consumer) handleInitializeAction(buffer *bytes.Buffer) error {
         return err
     }
 
-    consumer.Processor.Init(action.ShardID, action.SequenceNumber, action.SubSequenceNumber)
+    consumer.Processor.Initialize(action.ShardID, action.SequenceNumber, action.SubSequenceNumber)
 
     return nil
 }
@@ -133,7 +133,12 @@ func (consumer *Consumer) handleShutdownAction(buffer *bytes.Buffer) error {
         return err
     }
 
-    consumer.Processor.Shutdown(action.Reason, consumer.Checkpointer)
+    if action.Reason == "SHARD_END" {
+        consumer.Processor.ShardEnded(consumer.Checkpointer)
+    }
+    if action.Reason == "LEASE_LOST" {
+        consumer.Processor.LeaseLost()
+    }
 
     return nil
 }
