@@ -92,6 +92,7 @@ REMOTE_MAVEN_PACKAGES = [
     ('software.amazon.awssdk', 'kinesis', '2.1.0'),
     ('software.amazon.awssdk', 'aws-cbor-protocol', '2.1.0'),
     ('software.amazon.awssdk', 'aws-json-protocol', '2.1.0'),
+    ('software.amazon.awssdk', 'aws-query-protocol', '2.1.0'),
     ('software.amazon.awssdk', 'protocol-core', '2.1.0'),
     ('ch.qos.logback', 'logback-classic', '1.1.7'),
     ('ch.qos.logback', 'logback-core', '1.1.7'),
