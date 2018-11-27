@@ -77,7 +77,7 @@ func (consumer *Consumer) handleAction(msg bytes.Buffer) {
     case "shutdown":
         err = consumer.handleShutdownAction(&msg)
     case "shutdownRequested":
-        consumer.handleShutdownRequestedAction()
+        err = consumer.handleShutdownRequestedAction()
     default:
         err = fmt.Errorf("unsupported KCL action: %s", action.ActionType)
     }
@@ -134,15 +134,15 @@ func (consumer *Consumer) handleShutdownAction(buffer *bytes.Buffer) error {
     }
 
     if action.Reason == "SHARD_END" {
-        consumer.Processor.ShardEnded(consumer.Checkpointer)
+        err = consumer.Processor.ShardEnded(consumer.Checkpointer)
     }
-    if action.Reason == "LEASE_LOST" {
-        consumer.Processor.LeaseLost()
+    else if action.Reason == "LEASE_LOST" {
+        err = consumer.Processor.LeaseLost()
     }
 
-    return nil
+    return err
 }
 
-func (consumer *Consumer) handleShutdownRequestedAction() {
-    consumer.Processor.ShutdownRequested(consumer.Checkpointer)
+func (consumer *Consumer) handleShutdownRequestedAction() error{
+    return consumer.Processor.ShutdownRequested(consumer.Checkpointer)
 }
