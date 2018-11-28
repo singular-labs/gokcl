@@ -26,7 +26,7 @@ func (cp *Checkpointer) CheckpointAll() error {
 
     serializedMessage, err := json.Marshal(checkpointMessage)
     if err != nil {
-        fmt.Fprintf(os.Stderr, "%s\n", err)
+        fmt.Fprintf(os.Stderr, "CheckpointAll Failed: %s\n", err)
         os.Exit(1)
     }
 
@@ -43,7 +43,7 @@ func (cp *Checkpointer) CheckpointSeq(seqNum string, subSeqNum uint64) error {
 
     serializedMessage, err := json.Marshal(checkpointMessage)
     if err != nil {
-        fmt.Fprintf(os.Stderr, "%s\n", err)
+        fmt.Fprintf(os.Stderr, "CheckpointSeq Failed: %s\n", err)
         os.Exit(1)
     }
 

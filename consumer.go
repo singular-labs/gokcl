@@ -49,7 +49,8 @@ func (consumer *Consumer) readAction() (buffer bytes.Buffer) {
     for {
         linePart, hasMoreInLine, err := bio.ReadLine()
         if err != nil {
-            panic("Unable to read line from stdin " + err.Error())
+            fmt.Fprintf(os.Stderr, "Failed to read line from stdin " + err.Error())
+            break
         }
         buffer.Write(linePart)
         if hasMoreInLine == false {
