@@ -10,7 +10,7 @@ from glob import glob
 from amazon_kclpy import kcl
 
 
-MULTI_LANG_DAEMON_CLASS = 'com.amazonaws.services.kinesis.multilang.MultiLangDaemon'
+MULTI_LANG_DAEMON_CLASS = 'software.amazon.kinesis.multilang.MultiLangDaemon'
 
 
 def get_dir_of_file(f):

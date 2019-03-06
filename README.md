@@ -24,4 +24,4 @@ Supports KCL v2 (Not backwards compatible)
             
 1) Install `amazon_kclpy` & compile `amazon-kinesis-client`
  
-    Run: `sh prereqs.sh`
+    Run: `pip install -r helper/requirements.txt`

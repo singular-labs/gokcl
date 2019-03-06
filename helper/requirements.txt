@@ -2,3 +2,7 @@ ipython==5.5.0
 click==6.7
 Jinja2==2.10
 boto3==1.5.1
+amazon_kclpy==2.0.1
+pytest-runner==4.4
+pytest==4.3.0
+
