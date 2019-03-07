@@ -28,6 +28,10 @@ type StatusAction struct {
     ResponseFor         string              `json:"responseFor"`
 }
 
+type LeastLostAction struct {
+    Action
+}
+
 type CheckpointAction struct {
     Action
     SequenceNumber      *string             `json:"sequenceNumber"`
