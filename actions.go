@@ -38,12 +38,9 @@ type CheckpointAction struct {
 // Record is an individual kinesis record.  Note that the body is always
 // base64 encoded.
 type Record struct {
-    DataB64             string              `json:"data"`
-    PartitionKey        string              `json:"partitionKey"`
-    SequenceNumber      string              `json:"sequenceNumber"`
-    SubSequenceNumber   uint64              `json:"subSequenceNumber"`
-    ApproximateArrivalTimestamp struct {
-        ID    uint64 `json:"nano"`
-        Size  uint64 `json:"epochSecond"`
-    }
+    DataB64                      string     `json:"data"`
+    PartitionKey                 string     `json:"partitionKey"`
+    SequenceNumber               string     `json:"sequenceNumber"`
+    SubSequenceNumber            uint64     `json:"subSequenceNumber"`
+    ApproximateArrivalTimestamp  uint64     `json:"approximateArrivalTimestamp"`
 }
