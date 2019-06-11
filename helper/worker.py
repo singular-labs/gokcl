@@ -11,6 +11,7 @@ from kcl_utils import run_kcl_process
 
 APPLICATION_NAME = os.environ.get("APPLICATION_NAME", "KCLWorker")
 EXECUTABLE_PATH = os.environ.get("EXECUTABLE_PATH")
+RETRIEVAL_MODE = os.environ.get("RETRIEVAL_MODE", "FANOUT")
 
 TEMPLATE_CONFIG_FILE_PATH = os.path.abspath(os.path.join(__file__, "../template.properties"))
 CONFIG_FILE_PATH_PATTERN = '/tmp/{stream_name}.properties'
@@ -50,7 +51,9 @@ def create_config_file(stream_name, region, extra=''):
         APPLICATION_NAME=APPLICATION_NAME,
         EXECUTABLE_PATH=EXECUTABLE_PATH,
         MAX_SHARDS=max_shards,
-        WORKER_ID=container_id)
+        WORKER_ID=container_id,
+        RETRIEVAL_MODE=RETRIEVAL_MODE
+    )
 
     config_data = json.loads(extra) if len(extra) > 0 else {}
 
