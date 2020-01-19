@@ -39,6 +39,10 @@ type CheckpointAction struct {
     Error               *string             `json:"error"`
 }
 
+type ShardEndedAction struct {
+    Action
+}
+
 // Record is an individual kinesis record.  Note that the body is always
 // base64 encoded.
 type Record struct {

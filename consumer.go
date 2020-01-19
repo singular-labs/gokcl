@@ -79,6 +79,8 @@ func (consumer *Consumer) handleAction(msg bytes.Buffer) {
 		err = consumer.handleShutdownRequestedAction()
 	case "leaseLost":
         err = consumer.handleLeaseLost(&msg)
+	case "shardEnded":
+		err = consumer.handleShardEnded(&msg)
 	default:
 		err = fmt.Errorf("unsupported KCL action: %s", action.ActionType)
 	}
@@ -145,6 +147,16 @@ func (consumer *Consumer) handleLeaseLost(buffer *bytes.Buffer) error {
 	}
 
 	return consumer.Processor.LeaseLost()
+}
+
+func (consumer *Consumer) handleShardEnded(buffer *bytes.Buffer) error {
+	var action ShardEndedAction
+	err := json.Unmarshal(buffer.Bytes(), &action)
+	if err != nil {
+		return err
+	}
+
+	return consumer.Processor.ShardEnded(consumer.Checkpointer)
 }
 
 func (consumer *Consumer) handleShutdownRequestedAction() error {
