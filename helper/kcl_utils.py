@@ -5,12 +5,14 @@ to make it cleaner to use.
 """
 
 import os
+import subprocess
 from glob import glob
 
 from amazon_kclpy import kcl
 
 
 MULTI_LANG_DAEMON_CLASS = 'software.amazon.kinesis.multilang.MultiLangDaemon'
+DEBUG_CLIENT_CLASS = "DebugClient"
 
 
 def get_dir_of_file(f):
@@ -45,7 +47,11 @@ def get_kcl_jar_path():
     return ':'.join(glob(os.path.join(get_kcl_dir(), 'jars', '*jar')))
 
 
-def get_kcl_classpath(properties=None, paths=None):
+def debug_main_file_path():
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), "../", "./src/main/java/singular"))
+
+
+def get_kcl_classpath(properties=None, paths=None, debug=False):
     """
     Generates a classpath that includes the location of the kcl jars, the
     properties file and the optional paths.
@@ -65,15 +71,21 @@ def get_kcl_classpath(properties=None, paths=None):
     # We add our paths after the user provided paths because this permits users to
     # potentially inject stuff before our paths (otherwise our stuff would always
     # take precedence).
+
+    if debug:
+        debug_file_path = debug_main_file_path()
+        paths.append(debug_file_path)
+
     paths.append(get_kcl_jar_path())
     if properties:
         # Add the dir that the props file is in
         dir_of_file = get_dir_of_file(properties)
         paths.append(dir_of_file)
+
     return ":".join([p for p in paths if p != ''])
 
 
-def get_kcl_app_command(java, multi_lang_daemon_class, properties, paths=None):
+def get_kcl_app_command(java, multi_lang_daemon_class, properties, paths=None, debug=False):
     """
     Generates a command to run the MultiLangDaemon.
 
@@ -92,16 +104,25 @@ def get_kcl_app_command(java, multi_lang_daemon_class, properties, paths=None):
     command = java
     args = [
         java,
+    ]
+
+    classpath = get_kcl_classpath(properties, paths, debug=debug)
+
+    # This is to disable SSL verification in local stack kinesis :-(
+    if debug:
+        multi_lang_daemon_class = DEBUG_CLIENT_CLASS
+
+    args.extend([
         "-cp",
-        get_kcl_classpath(properties, paths),
+        classpath,
         multi_lang_daemon_class,
         properties
-    ]
+    ])
 
     return command, args
 
 
-def run_kcl_process(java_path, config_file_path):
+def run_kcl_process(java_path, config_file_path, debug=False):
     """
     Runs the KCL process according to the given parameters (does not return).
 
@@ -114,6 +135,20 @@ def run_kcl_process(java_path, config_file_path):
     command, args = get_kcl_app_command(
         java_path,
         MULTI_LANG_DAEMON_CLASS,
-        config_file_path)
+        config_file_path,
+        debug=debug)
+
+    # Need to compile with the same args and env
+    if debug:
+        # Use javac
+        build_args = [args[0] + "c"]
+
+        # Need classpath, can omit properties
+        build_args.extend(args[1:-1])
+
+        # Need to specify full path of file to build
+        build_args[-1] = os.path.join(debug_main_file_path(), "%s.java" % DEBUG_CLIENT_CLASS)
+
+        subprocess.check_call(' '.join(build_args), shell=True, stdout=subprocess.PIPE)
 
     os.execv(command, args)

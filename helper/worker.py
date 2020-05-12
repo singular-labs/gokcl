@@ -71,9 +71,11 @@ def create_config_file(stream_name, region, extra=''):
 @click.argument('region')
 @click.option("-extra", type=str, default='',
               help="Optional mapping added into the config.")
-def main(stream_name, region, extra):
+@click.option("-debug", is_flag=True, type=bool, default=False,
+              help="Whether to run in debug mode (For local stack)")
+def main(stream_name, region, extra, debug):
     config_file_path = create_config_file(stream_name, region, extra)
-    run_kcl_process(JAVA_PATH, config_file_path)
+    run_kcl_process(JAVA_PATH, config_file_path, debug=debug)
 
 
 if __name__ == "__main__":
