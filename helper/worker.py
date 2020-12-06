@@ -12,6 +12,7 @@ from kcl_utils import run_kcl_process
 APPLICATION_NAME = os.environ.get("APPLICATION_NAME", "KCLWorker")
 EXECUTABLE_PATH = os.environ.get("EXECUTABLE_PATH")
 RETRIEVAL_MODE = os.environ.get("RETRIEVAL_MODE", "FANOUT")
+ENV_ID = os.environ.get("ENV_ID").lower()
 
 TEMPLATE_CONFIG_FILE_PATH = os.path.abspath(os.path.join(__file__, "../template.properties"))
 CONFIG_FILE_PATH_PATTERN = '/tmp/{stream_name}.properties'
@@ -45,10 +46,12 @@ def create_config_file(stream_name, region, extra=''):
     max_shards = os.environ.get('MAX_SHARDS_PER_CONTAINER', '1024')
     container_id = str(uuid.uuid4())
 
+    application_name = APPLICATION_NAME if ENV_ID == "prod" else ENV_ID + '-' + APPLICATION_NAME
+
     template_vars = dict(
         REGION=region,
         STREAM_NAME=stream_name,
-        APPLICATION_NAME=APPLICATION_NAME,
+        APPLICATION_NAME=application_name,
         EXECUTABLE_PATH=EXECUTABLE_PATH,
         MAX_SHARDS=max_shards,
         WORKER_ID=container_id,
