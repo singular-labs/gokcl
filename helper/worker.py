@@ -63,7 +63,7 @@ def create_config_file(stream_name, region, extra=''):
     config_file_path = CONFIG_FILE_PATH_PATTERN.format(stream_name=stream_name)
     with open(config_file_path, "w") as config_file:
         config_file.write(template.render(template_vars))
-        for key, value in config_data.iteritems():
+        for key, value in config_data.items():
             config_file.write('\n%(key)s = %(value)s\n' % locals())
 
     return config_file_path
